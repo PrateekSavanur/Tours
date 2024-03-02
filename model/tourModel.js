@@ -105,7 +105,7 @@ toursSchema.pre(/^find/, function (next) {
 })
 
 toursSchema.post(/^find/, function (doc, next) {
-  console.log(doc)
+  // console.log(doc)
   console.log(`Quwey took ${Date.now() - this.start} ms`)
   next()
 })
