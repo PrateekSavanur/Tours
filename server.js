@@ -31,16 +31,16 @@ process.on("UnhandledRejection", (err) => {
   console.log(err.name, err.message)
   console.log("Unhandled rejection ❌💥 Shutting down")
   // Complete all the requests and then end
-  server.close(() => {
-    process.exit(1)
-  })
+  // server.close(() => {
+  //   process.exit(1)
+  // })
 })
 
 process.on("uncaughtException", (err) => {
-  console.log(err.name, err.message)
+  console.log(err.name)
   console.log("Uncaught Exception ❌💥 Shutting down.............")
   // Complete all the requests and then end
-  server.close(() => {
-    process.exit(1)
-  })
+  // server.close(() => {
+  //   process.exit(1)
+  // })
 })
