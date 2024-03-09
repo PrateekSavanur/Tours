@@ -23,7 +23,6 @@ const createSendToken = (user, statusCode, res) => {
   if (process.env.NODE_ENV === "production") cookieOptions.secure = true
 
   res.cookie("jwt", token, cookieOptions)
-
   // Remove password from output
   user.password = undefined
 
@@ -117,7 +116,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   // Generate random token
   const resetToken = user.createPasswordResetToken()
   await user.save({ validateBeforeSave: false })
-
   // Send back as email
 
   const resetUrl = `${req.protocol}://${req.get(
@@ -169,16 +167,8 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetToken = undefined
   user.passwordResetExpires = undefined
 
-  // if (user.passwordConfirm !== user.password) {
-  //   console.log("Error")
-  //   return next(new AppError("ValidationError", 401))
-  // }
-
   await user.save()
 
-  // Update changedPasswordAt
-
-  // Login user and send JWT
   createSendToken(user, 200, res)
 })
 
@@ -187,7 +177,6 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user.id).select("+password")
 
   // Check if password is correct
-
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
     return next(new AppError("Wrong Password", 401))
   }
@@ -200,19 +189,3 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // Login with new password
   createSendToken(user, 200, res)
 })
-
-//   {
-//     "name": "Admin",
-//     "email": "admin@natours.com",
-//     "password": "pass12345",
-//     "passwordConfirm": "pass12345",
-//     "role":"admin"
-// }
-
-// role "user"
-//
-// name "Test user"
-//
-// email "test@gmail.com"
-//     "password": "pass12345",
-//     "passwordConfirm": "pass12345",
