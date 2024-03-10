@@ -1,14 +1,5 @@
 const express = require("express")
-const {
-  getAllTours,
-  getTour,
-  createTour,
-  updateTour,
-  deleteTour,
-  aliasTopTours,
-  getTourStats,
-  getMonthlyPlan,
-} = require("../controllers/tourController")
+const tourController = require("../controllers/tourController")
 const authController = require("../controllers/authController")
 const reviewRouter = require("./reviewRoutes")
 
@@ -18,37 +9,45 @@ const router = express.Router()
 router.use("/:tourId/reviews", reviewRouter)
 
 //middleware
-router.route("/top-5-cheap").get(aliasTopTours, getAllTours)
-router.route("/tour-stats").get(getTourStats)
+router
+  .route("/top-5-cheap")
+  .get(tourController.aliasTopTours, tourController.getAllTours)
+router.route("/tour-stats").get(tourController.getTourStats)
 router
   .route("/monthly-plan/:year")
   .get(
     authController.protect,
     authController.restrictTo("admin", "lead-guide", "guide"),
-    getMonthlyPlan,
+    tourController.getMonthlyPlan,
   )
 
 router
+  .route("/tours-within/:distance/center/:latlng/unit/:unit")
+  .get(tourController.getToursWithin)
+
+router.route("/distances/:latlng/unit/:unit").get(tourController.getDistances)
+
+router
   .route("/")
-  .get(getAllTours)
+  .get(tourController.getAllTours)
   .post(
     authController.protect,
     authController.restrictTo("admin", "lead-guide"),
-    createTour,
+    tourController.createTour,
   )
 
 router
   .route("/:id")
-  .get(getTour)
+  .get(tourController.getTour)
   .patch(
     authController.protect,
     authController.restrictTo("admin", "lead-guide"),
-    updateTour,
+    tourController.updateTour,
   )
   .delete(
     authController.protect,
     authController.restrictTo("admin", "lead-guide"),
-    deleteTour,
+    tourController.deleteTour,
   )
 
 module.exports = router
